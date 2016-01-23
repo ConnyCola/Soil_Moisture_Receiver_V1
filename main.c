@@ -71,7 +71,7 @@ void MRFI_RxCompleteISR_new()	// in Components/mrfi/radios/family5/mrfi_radio.c
 			packetreceived.frame[offset +9] += packetreceived.frame[offset +9] == ' ' ? 0x10 : 0;
 
 
-		}
+	}
 
 	for(i=offset; i <= packetreceived.frame[0]; i++)
 		printf("%c",packetreceived.frame[i]);
@@ -96,7 +96,7 @@ __interrupt void USCI_A0_ISR(void)
 		CMD c;
 		c.cmd = CMD_VERS;
 		c.val1 = 0;
-		c.val2 = 1000;
+		c.val2 = 1000;	//build nr should start with 1xxx
 		send_CMD(c);
 		count = 0;
 	}

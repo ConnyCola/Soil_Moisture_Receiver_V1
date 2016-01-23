@@ -2,6 +2,8 @@
 *.map
 *.settings
 *.map
+*.ccsproject
+*.cproject
 
 # Build results
 
