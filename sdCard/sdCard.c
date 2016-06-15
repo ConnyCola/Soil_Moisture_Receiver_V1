@@ -6,8 +6,8 @@
 #include "sdCard.h"
 #include "../defines.h"
 
-void printRES2(const void* message,const void* message2,int res)
-{	u_int i;
+void printRES2(const void* message,const void* message2,int res){
+	u_int i;
 	printf("%s %s",message,message2);
 	for(i=0;i<(30-strlen(message)-strlen(message2));i++)
 		printf(" ");
@@ -15,8 +15,8 @@ void printRES2(const void* message,const void* message2,int res)
 
 }
 
-void printRES(const void* message, int res)
-{	u_int i;
+void printRES(const void* message, int res){
+	u_int i;
 	//TODO: for schleifen mit prints ersetzten!
 	printf("%s ",message);
 	for(i=0;i<(30-strlen(message));i++)
@@ -27,12 +27,10 @@ void printRES(const void* message, int res)
 
 
 void resetSDcard(void){
-
 	SD_NPWR_PORT |= SD_NPWR_PIN;
 	delay_ms2(100);
 	SD_NPWR_PORT &= ~SD_NPWR_PIN;
 	delay_ms2(100);
-
 }
 
 
@@ -40,8 +38,7 @@ void resetSDcard(void){
  * Initialize the sdCard (several times)
  * Mount the existing FileSystem
  */
-void initSDcard(void)
-{
+void initSDcard(void){
 	printf("\r\n\r\n/-------   SD Card Process  -------/\r\n\r\n");
 
 	// ---------------      Init Filesystem     ------------------
@@ -80,8 +77,7 @@ void writeTAGDataSDcard(ENTRY *e){
  * Finalize sdCard to write back the last 512 Bytes
  * => the last unfinished sector
  */
-void finalizeSDcard()
-{
+void finalizeSDcard(){
 	pf_write(0,0,&bw);
 }
 
@@ -89,8 +85,7 @@ void finalizeSDcard()
  * Open a File on the sdCard to read or write to it
  * Set IndexFile to zero (first Entry)
  */
-FRESULT openFileSDcard(const void* Filename)
-{
+FRESULT openFileSDcard(const void* Filename){
 	FileIndex = 0;
 	res = pf_open(Filename);
 	printRES2("Open File ",Filename, res);
@@ -100,11 +95,11 @@ FRESULT openFileSDcard(const void* Filename)
 
 
 //---------------  Read Data back  -----------------------------------
-void readSDcard(ENTRY *e)
-{	u_int i;
+void readSDcard(ENTRY *e){
+	u_int i;
 	u_int j;
 	res = pf_read(&e->str, ENTRY_LEN, &s1);
-	//printf("%s",e->str);   						//Dump Content to Serial
+	//printf("%s",e->str);   //Dump Content to Serial
 
 	//Eintragsnummer auslesen
 	i = 1;
@@ -116,8 +111,8 @@ void readSDcard(ENTRY *e)
 	}
 
 	//Tag auslesen
-	i = i+2;		//Letzte Zahl der Nummer + 2
-	j = i;			// offset bis zu beginn des Tags
+	i = i+2;				//Letzte Zahl der Nummer + 2
+	j = i;					// offset bis zu beginn des Tags
 	while(e->str[i] != 0x20 && e->str[i] != 0x00)
 	{
 		e->tag[i-j]= e->str[i];
@@ -126,7 +121,7 @@ void readSDcard(ENTRY *e)
 	e->tag[i-j] = 0x00;  	//abschluss des Strings
 
 	//Data auslesen
-	i = i+2;		// Letztes Zeichen des Tags + 2
+	i = i+2;				// Letztes Zeichen des Tags + 2
 	e->data = 0;
 	while(e->str[i] != 0x20 && e->str[i] != 0x00)
 	{
@@ -137,8 +132,8 @@ void readSDcard(ENTRY *e)
 
 
 // Find and set read Pointer
-void findEntryNrSdCard_READ(DWORD nr, ENTRY *e)
-{	u_int i;
+void findEntryNrSdCard_READ(DWORD nr, ENTRY *e){
+	u_int i;
 	nr = nr-1;
 	int ofs = nr % (512 / ENTRY_LEN);
 	nr = nr - ofs;
@@ -152,8 +147,8 @@ void findEntryNrSdCard_READ(DWORD nr, ENTRY *e)
 }
 
 //Find and set write Pointer
-void findEntryNrSdCard_WRITE(DWORD nr, ENTRY *e)
-{	u_int i;
+void findEntryNrSdCard_WRITE(DWORD nr, ENTRY *e){
+	u_int i;
 	nr = nr-1;
 	int ofs = nr % (512 / ENTRY_LEN);
 	nr = nr - ofs;
@@ -179,7 +174,7 @@ void findEntryNrSdCard_WRITE(DWORD nr, ENTRY *e)
 }
 
 // read INI file on SD card to get the configs
-void readINI( u_char *sourceIP,  u_char *gatewayIP,  u_char *subnetMask) {
+void readINI( u_char *sourceIP,  u_char *gatewayIP,  u_char *subnetMask){
 	char str[32];
 	strcpy(str,(const u_char*)"                              ");
 
@@ -217,10 +212,9 @@ void readINI( u_char *sourceIP,  u_char *gatewayIP,  u_char *subnetMask) {
 	}
     finalizeSDcard();
 
-
 }
 
-void delay_ms2(u_int time_ms) {
+void delay_ms2(u_int time_ms){
 	u_int c = 0;
 	while (c++ < time_ms) {
 		_delay_cycles(16000);

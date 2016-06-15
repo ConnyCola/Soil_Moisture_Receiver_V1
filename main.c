@@ -12,15 +12,15 @@ void main (void)
 {
 	WDTCTL = WDTPW+WDTHOLD;                   // Stop watchdog timer
 	P1OUT  = BIT0;				// P1.0 input+pullup
-    P1REN |= BIT0;				// P1.0 input+pullup
-    P1IE  |= BIT0;				// P1.0 interrupt enable
-    P1IES |= BIT0;				// P1.0 Hi/Lo edge
-    P1IFG &= ~BIT0;				// P1.0 IFG Flag cleared
+	P1REN |= BIT0;				// P1.0 input+pullup
+	P1IE  |= BIT0;				// P1.0 interrupt enable
+	P1IES |= BIT0;				// P1.0 Hi/Lo edge
+	P1IFG &= ~BIT0;				// P1.0 IFG Flag cleared
 
 	BSP_Init();
 	MRFI_Init();				// Init SPI com with CC2500
-    MRFI_SetRFPwr(2);			// RF transmitting power (0 to 2)
-	mrfiRadioInterfaceWriteReg(CHANNR,180);	// set channel number
+	MRFI_SetRFPwr(2);			// RF transmitting power (0 to 2)
+    mrfiRadioInterfaceWriteReg(CHANNR, 180);	// set channel number
 
 	MRFI_WakeUp();				// wake up the radio
 	MRFI_RxOn(); 				// turn into Rx mode
@@ -31,8 +31,8 @@ void main (void)
 	__bis_SR_register(LPM0_bits + GIE);    // Enter LPM0, interrupts enabled
 }
 
-int8_t RSSI_calculate(uint8_t rawValue)
-{	int16_t rssi;
+int8_t RSSI_calculate(uint8_t rawValue){
+	int16_t rssi;
 	if(rawValue >= 128)
 		rssi = (int16_t)(rawValue - 256)/2 - 74;
 	else
@@ -43,14 +43,15 @@ int8_t RSSI_calculate(uint8_t rawValue)
 	return rssi;
 }
 
-void MRFI_RxCompleteISR_new()	// in Components/mrfi/radios/family5/mrfi_radio.c
-{	// Data back form Sensor
+void MRFI_RxCompleteISR_new(){
+	// in Components/mrfi/radios/family5/mrfi_radio.c
+	// Data back form Sensor
 
-    // Protocoll
-    //   | ID | CMD | val1 |val2 | \n |
-    //   | 2B | 1B  |  4B  | 4B  | 1B |
-    //   9    11    12     16     20
-    //   0    2     3      7      11
+	// Protocoll
+	//   | ID | CMD | val1 |val2 | \n |
+	//   | 2B | 1B  |  4B  | 4B  | 1B |
+	//   9    11    12     16     20
+	//   0    2     3      7      11
 	MRFI_Receive(&packetreceived);
 
 	int offset = 9;
@@ -66,11 +67,9 @@ void MRFI_RxCompleteISR_new()	// in Components/mrfi/radios/family5/mrfi_radio.c
 		packetreceived.frame[15] = rssi%10 +'0';
 	}
 	else if(packetreceived.frame[offset +2] == CMD_VERS){
-			packetreceived.frame[offset +7] = '1';
-			packetreceived.frame[offset +8] += packetreceived.frame[offset +8] == ' ' ? 0x10 : 0;
-			packetreceived.frame[offset +9] += packetreceived.frame[offset +9] == ' ' ? 0x10 : 0;
-
-
+		packetreceived.frame[offset +7] = '1';
+		packetreceived.frame[offset +8] += packetreceived.frame[offset +8] == ' ' ? 0x10 : 0;
+		packetreceived.frame[offset +9] += packetreceived.frame[offset +9] == ' ' ? 0x10 : 0;
 	}
 
 	for(i=offset; i <= packetreceived.frame[0]; i++)
@@ -104,15 +103,13 @@ __interrupt void USCI_A0_ISR(void)
 		packet.frame[offset + count] = in_key;
 		packet.frame[0] = offset + count;
 		count++;
-
 	}
-
-
 }
 
+
 #pragma vector=PORT1_VECTOR
-__interrupt void Port_1(void)
-{	P1IFG &= ~BIT0;				// P1.0 IFG Flag cleared
+__interrupt void Port_1(void){
+	P1IFG &= ~BIT0;				// P1.0 IFG Flag cleared
 	WDTCTL &= ~WDTHOLD;			// Start watchdog timer
 	while(1);					// will reset the programm
 }
